@@ -24,12 +24,12 @@ public class WordCounter implements Runnable {
     }
 
     public void run() {
-        String line;
         try (BufferedReader bufferedReader = new BufferedReader(
                 new InputStreamReader(inputStream, StandardCharsets.UTF_8))){
 
+            String line;
             while ((line = bufferedReader.readLine()) != null){
-                List<String> wordList = Splitter.onPattern("([^\\w']|\\s)")
+                List<String> wordList = Splitter.onPattern("([^a-zA-Z']|\\s)")
                         .omitEmptyStrings()
                         .splitToList(line);
                 for(String word : wordList) {
