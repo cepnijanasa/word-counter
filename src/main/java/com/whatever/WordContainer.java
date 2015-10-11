@@ -11,7 +11,8 @@ public class WordContainer {
     public synchronized void put(String word) {
         if (wordMap.containsKey(word)) {
             Integer count = wordMap.get(word);
-            wordMap.put(word, count++); // replace existing value
+            count++;
+            wordMap.put(word, count); // replace existing value
         } else {
             wordMap.put(word, 1);
         }
