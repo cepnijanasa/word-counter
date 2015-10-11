@@ -33,7 +33,7 @@ public class WordCounter implements Runnable {
                         .omitEmptyStrings()
                         .splitToList(line);
                 for(String word : wordList) {
-                    wordContainer.put(word);
+                    wordContainer.put(word.toLowerCase());
                 }
             }
         } catch (IOException e) {

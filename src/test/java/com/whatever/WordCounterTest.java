@@ -13,24 +13,8 @@ import static org.junit.Assert.assertFalse;
 public class WordCounterTest {
 
     @Test
-    public void countWords() {
-        String input = "Don't put all your eggs in one basket";
-        String[] splitInput = input.split("\\s");
-        InputStream inputStream = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
-        WordContainer container = new WordContainer();
-        WordCounter wordCounter = new WordCounter(inputStream, container);
-        wordCounter.run();
-        Map<String, Integer> resultMap = container.getWordMap();
-        assertFalse(resultMap.isEmpty());
-        assertTrue(resultMap.size() == splitInput.length);
-        for(int i=0; i<resultMap.size(); i++) {
-            assertTrue(Integer.valueOf(1).equals(resultMap.get(splitInput[i])));
-        }
-    }
-
-    @Test
     public void countWordsWithDuplicatesAndSeparators() {
-        String input = "Don't put, all your eggs, in one basket. Don't put";
+        String input = "Don't put, all your eggs, in one basket. DON't put";
         InputStream inputStream = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
         WordContainer container = new WordContainer();
         WordCounter wordCounter = new WordCounter(inputStream, container);
@@ -39,7 +23,7 @@ public class WordCounterTest {
         assertFalse(resultMap.isEmpty());
         assertTrue(resultMap.size() == 8);
 
-        assertTrue(Integer.valueOf(2).equals(resultMap.get("Don't")));
+        assertTrue(Integer.valueOf(2).equals(resultMap.get("don't")));
         assertTrue(Integer.valueOf(2).equals(resultMap.get("put")));
         assertTrue(Integer.valueOf(1).equals(resultMap.get("all")));
         assertTrue(Integer.valueOf(1).equals(resultMap.get("your")));
