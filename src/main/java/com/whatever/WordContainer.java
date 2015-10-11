@@ -1,24 +1,38 @@
 package com.whatever;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class WordContainer {
 
-    private Map<String, Integer> wordMap = Collections.synchronizedMap(new HashMap<String, Integer>());
+    private SortedMap<String, Integer> wordMap = Collections.synchronizedSortedMap(
+            new TreeMap<String, Integer>());
 
     public synchronized void put(String word) {
         if (wordMap.containsKey(word)) {
             Integer count = wordMap.get(word);
-            count++;
-            wordMap.put(word, count); // replace existing value
+            wordMap.put(word, ++count); // replace existing value
         } else {
             wordMap.put(word, 1);
         }
     }
 
-    public Map<String, Integer> getWordMap() {
-        return wordMap;
+    Map<String, Integer> getWordMap() {
+        return Collections.unmodifiableMap(wordMap);
+    }
+
+    public Map<String, Integer> getWordsAG() {
+        return Collections.unmodifiableMap(wordMap.headMap("h"));
+    }
+
+    public Map<String, Integer> getWordsHN() {
+        return Collections.unmodifiableMap(wordMap.subMap("h", "o"));
+    }
+
+    public Map<String, Integer> getWordsOU() {
+        return Collections.unmodifiableMap(wordMap.subMap("o", "v"));
+    }
+
+    public Map<String, Integer> getWordsVZ() {
+        return Collections.unmodifiableMap(wordMap.tailMap("v"));
     }
 }
