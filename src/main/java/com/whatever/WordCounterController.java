@@ -10,8 +10,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.*;
-import java.util.zip.ZipOutputStream;
 
 @Controller
 public class WordCounterController {
@@ -27,38 +25,19 @@ public class WordCounterController {
 
     @RequestMapping(path = "/upload", method = RequestMethod.POST)
     public void handleFormUpload(HttpServletResponse response, FileUploadForm uploadForm) {
-        ZipOutputStream zos = null;
         try {
-            Thread thread;
-            List<Thread> threadList = new ArrayList<>();
-            WordContainer container = new WordContainer();
+            WordCollector collector = new WordCollector();
             for (MultipartFile file : uploadForm.getFiles()) {
-                thread = new Thread(new WordCounter(file.getInputStream(), container));
-                threadList.add(thread);
+                collector.addSource(file.getInputStream());
             }
-            for (Thread t : threadList) {
-                t.start();
-                t.join();
-            }
+            WordCollection container = collector.collectWords();
 
             response.setContentType("application/zip");
             response.setHeader("Content-Disposition", "filename='words.zip'");
-            zos = new ZipOutputStream(new BufferedOutputStream(
-                    response.getOutputStream()));
 
-            ZipWriter.createZipEntry(zos, container.getWordsAG(), "A_G.txt");
-            ZipWriter.createZipEntry(zos, container.getWordsHN(), "H_N.txt");
-            ZipWriter.createZipEntry(zos, container.getWordsOU(), "O_U.txt");
-            ZipWriter.createZipEntry(zos, container.getWordsVZ(), "V_Z.txt");
-        } catch (InterruptedException | IOException e) {
-            log.error("", e);
-            // TODO
-        } finally {
-            try {
-                zos.close();
-            } catch (IOException e) {
-                //silent
-            }
+            ZipWriter.putWordsInZip(response.getOutputStream(), container);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -2,7 +2,7 @@ package com.whatever;
 
 import java.util.*;
 
-public class WordContainer {
+public class WordCollection {
 
     private SortedMap<String, Integer> wordMap = Collections.synchronizedSortedMap(
             new TreeMap<String, Integer>());

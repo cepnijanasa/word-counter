@@ -7,24 +7,24 @@ import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 
-public class WordContainerTest {
+public class WordCollectionTest {
 
-    WordContainer container;
+    WordCollection collection;
 
     @Before
     public void init() {
-        container = new WordContainer();
-        container.put("abstract");
-        container.put("graceful");
-        container.put("hedgehog");
-        container.put("monster");
-        container.put("unique");
-        container.put("zebra");
+        collection = new WordCollection();
+        collection.put("abstract");
+        collection.put("graceful");
+        collection.put("hedgehog");
+        collection.put("monster");
+        collection.put("unique");
+        collection.put("zebra");
     }
 
     @Test
     public void getWordsAGTest() {
-        Map<String, Integer> wordsAG = container.getWordsAG();
+        Map<String, Integer> wordsAG = collection.getWordsAG();
         assertTrue(wordsAG.size() == 2);
         assertTrue(wordsAG.containsKey("abstract"));
         assertTrue(wordsAG.containsKey("graceful"));
@@ -32,7 +32,7 @@ public class WordContainerTest {
 
     @Test
     public void getWordsHNTest() {
-        Map<String, Integer> wordsHN = container.getWordsHN();
+        Map<String, Integer> wordsHN = collection.getWordsHN();
         assertTrue(wordsHN.size() == 2);
         assertTrue(wordsHN.containsKey("hedgehog"));
         assertTrue(wordsHN.containsKey("monster"));
@@ -40,14 +40,14 @@ public class WordContainerTest {
 
     @Test
     public void getWordsOUTest() {
-        Map<String, Integer> wordsOU = container.getWordsOU();
+        Map<String, Integer> wordsOU = collection.getWordsOU();
         assertTrue(wordsOU.size() == 1);
         assertTrue(wordsOU.containsKey("unique"));
     }
 
     @Test
     public void getWordsVZTest() {
-        Map<String, Integer> wordsVZ = container.getWordsVZ();
+        Map<String, Integer> wordsVZ = collection.getWordsVZ();
         assertTrue(wordsVZ.size() == 1);
         assertTrue(wordsVZ.containsKey("zebra"));
     }

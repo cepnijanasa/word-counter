@@ -16,11 +16,11 @@ public class WordCounter implements Runnable {
     Logger log = LoggerFactory.getLogger(WordCounter.class);
 
     private InputStream inputStream;
-    private WordContainer wordContainer;
+    private WordCollection wordCollection;
 
-    public WordCounter(InputStream inputStream, WordContainer wordContainer) {
+    public WordCounter(InputStream inputStream, WordCollection wordCollection) {
         this.inputStream = inputStream;
-        this.wordContainer = wordContainer;
+        this.wordCollection = wordCollection;
     }
 
     public void run() {
@@ -33,7 +33,7 @@ public class WordCounter implements Runnable {
                         .omitEmptyStrings()
                         .splitToList(line);
                 for(String word : wordList) {
-                    wordContainer.put(word.toLowerCase());
+                    wordCollection.put(word.toLowerCase());
                 }
             }
         } catch (IOException e) {

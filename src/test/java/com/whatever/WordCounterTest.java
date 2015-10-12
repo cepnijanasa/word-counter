@@ -16,7 +16,7 @@ public class WordCounterTest {
     public void countWordsWithDuplicatesAndSeparators() {
         String input = "Don't put, all your eggs, in one basket. DON't put";
         InputStream inputStream = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
-        WordContainer container = new WordContainer();
+        WordCollection container = new WordCollection();
         WordCounter wordCounter = new WordCounter(inputStream, container);
         wordCounter.run();
         Map<String, Integer> resultMap = container.getWordMap();
@@ -37,7 +37,7 @@ public class WordCounterTest {
     public void countWordsWithNumbers() {
         String input = "Don't put 13 eggs in 1 basket. DON't put 1000eur into_ £549";
         InputStream inputStream = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
-        WordContainer container = new WordContainer();
+        WordCollection container = new WordCollection();
         WordCounter wordCounter = new WordCounter(inputStream, container);
         wordCounter.run();
         Map<String, Integer> resultMap = container.getWordMap();
