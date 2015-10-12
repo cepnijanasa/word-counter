@@ -8,7 +8,7 @@ public class WordCollector {
 
     private List<InputStream> isList = new ArrayList<>();
 
-    public WordCollection collectWords() {
+    public WordCollection collectWords() throws InterruptedException {
         Thread thread;
         List<Thread> threadList = new ArrayList<>();
         WordCollection collection = new WordCollection();
@@ -18,11 +18,7 @@ public class WordCollector {
         }
         for (Thread t : threadList) {
             t.start();
-            try {
-                t.join();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            t.join();
         }
 
         return collection;

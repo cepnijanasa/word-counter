@@ -3,11 +3,13 @@ package com.whatever;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 
@@ -24,8 +26,9 @@ public class WordCounterController {
     }
 
     @RequestMapping(path = "/upload", method = RequestMethod.POST)
-    public void handleFormUpload(HttpServletResponse response, FileUploadForm uploadForm) {
-        try {
+    public void handleFormUpload(HttpServletResponse response, FileUploadForm uploadForm)
+            throws IOException, InterruptedException {
+
             WordCollector collector = new WordCollector();
             for (MultipartFile file : uploadForm.getFiles()) {
                 collector.addSource(file.getInputStream());
@@ -36,8 +39,13 @@ public class WordCounterController {
             response.setHeader("Content-Disposition", "filename='words.zip'");
 
             ZipWriter.putWordsInZip(response.getOutputStream(), container);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    }
+
+    @ExceptionHandler({IOException.class, InterruptedException.class})
+    public ModelAndView handleError(HttpServletRequest req, Exception exception) {
+        log.error("Request: " + req.getRequestURL() + " raised " + exception);
+        return new ModelAndView("error")
+                .addObject("exception", exception)
+                .addObject("url", req.getRequestURL());
     }
 }
