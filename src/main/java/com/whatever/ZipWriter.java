@@ -1,8 +1,6 @@
 package com.whatever;
 
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -23,12 +21,14 @@ public class ZipWriter {
         out.closeEntry();
     }
 
-    public static void putWordsInZip(OutputStream out, WordCollection container) throws IOException {
-        try (ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(out))) {
+    public static byte[] createZip(WordCollection container) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try (ZipOutputStream zos = new ZipOutputStream(new BufferedOutputStream(bos))) {
             createZipEntry(zos, container.getWordsAG(), "A_G.txt");
             createZipEntry(zos, container.getWordsHN(), "H_N.txt");
             createZipEntry(zos, container.getWordsOU(), "O_U.txt");
             createZipEntry(zos, container.getWordsVZ(), "V_Z.txt");
         }
+        return bos.toByteArray();
     }
 }
