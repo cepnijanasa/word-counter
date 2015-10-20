@@ -1,30 +1,39 @@
 package com.whatever;
 
-import java.io.InputStream;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class WordCollector {
 
-    private List<InputStream> isList = new ArrayList<>();
+    public static WordCollection collectWords(List<MultipartFile> fileList)
+            throws InterruptedException, ExecutionException, IOException {
 
-    public WordCollection collectWords() throws InterruptedException {
-        Thread thread;
-        List<Thread> threadList = new ArrayList<>();
         WordCollection collection = new WordCollection();
-        for (InputStream is : isList) {
-            thread = new Thread(new WordCounter(is, collection));
-            threadList.add(thread);
+        if (fileList.isEmpty()) {
+            return collection;
         }
-        for (Thread t : threadList) {
-            t.start();
-            t.join();
+
+        ExecutorService executor = Executors.newFixedThreadPool(3);
+
+        List<Future> futureList = new ArrayList<>(fileList.size());
+        for (MultipartFile file : fileList) {
+            futureList.add(
+                    executor.submit(
+                            new WordCounter(file, collection))
+            );
         }
+        for (Future future : futureList) {
+            future.get(); // returns null as soon thread finishes its work.
+        }
+        executor.shutdown();
 
         return collection;
-    }
-
-    public void addSource(InputStream is) {
-        isList.add(is);
     }
 }
