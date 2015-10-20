@@ -2,16 +2,18 @@ package com.whatever;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 @Controller
 public class WordCounterController {
@@ -26,26 +28,25 @@ public class WordCounterController {
     }
 
     @RequestMapping(path = "/upload", method = RequestMethod.POST)
-    public void handleFormUpload(HttpServletResponse response, FileUploadForm uploadForm)
-            throws IOException, InterruptedException {
+    public ResponseEntity<byte[]> handleFormUpload(FileUploadForm uploadForm)
+            throws IOException, InterruptedException, ExecutionException {
 
-            WordCollector collector = new WordCollector();
-            for (MultipartFile file : uploadForm.getFiles()) {
-                collector.addSource(file.getInputStream());
-            }
-            WordCollection container = collector.collectWords();
+        WordCollection collection = WordCollector.collectWords(uploadForm.getFiles());
+        byte[] zipBytes = ZipWriter.createZip(collection);
 
-            response.setContentType("application/zip");
-            response.setHeader("Content-Disposition", "filename='words.zip'");
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set(HttpHeaders.CONTENT_TYPE, "application/zip");
+        responseHeaders.set(HttpHeaders.CONTENT_LENGTH, String.valueOf(zipBytes.length));
+        responseHeaders.set(HttpHeaders.CONTENT_DISPOSITION, "filename='words.zip'");
 
-            ZipWriter.putWordsInZip(response.getOutputStream(), container);
+        return new ResponseEntity<>(zipBytes, responseHeaders, HttpStatus.CREATED);
     }
 
-    @ExceptionHandler({IOException.class, InterruptedException.class})
-    public ModelAndView handleError(HttpServletRequest req, Exception exception) {
-        log.error("Request: " + req.getRequestURL() + " raised " + exception);
+    @ExceptionHandler({IOException.class, InterruptedException.class, ExecutionException.class})
+    public ModelAndView handleError(RequestEntity<String> req, Exception exception) {
+        log.error("Request: " + req.getUrl() + " raised " + exception);
         return new ModelAndView("error")
                 .addObject("exception", exception)
-                .addObject("url", req.getRequestURL());
+                .addObject("url", req.getUrl());
     }
 }

@@ -1,6 +1,9 @@
 package com.whatever;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class WordCollection {
 
@@ -16,7 +19,7 @@ public class WordCollection {
         }
     }
 
-    Map<String, Integer> getWordMap() {
+    Map<String, Integer> getWords() {
         return Collections.unmodifiableMap(wordMap);
     }
 
